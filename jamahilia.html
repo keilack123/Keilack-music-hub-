@@ -1,0 +1,129 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Music Share</title>
+    <style>
+        .music-player {
+            width: 80%;
+            margin: 40px auto;
+            background-color: #FFA07A;
+            padding: 20px;
+            border: 1px solid #ddd;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        #upload-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: #fff;
+        }
+        
+        #download-button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #e74c3c;
+            color: #fff;
+        }
+        
+        #uploaded-files {
+            margin-top: 20px;
+        }
+        
+        #uploaded-files ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        #uploaded-files li {
+            margin-bottom: 10px;
+        }
+        
+        .audio-container {
+            margin-bottom: 20px;
+        }
+        
+        .song-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="music-player">
+        <h1>FSR music Share</h1>
+        <input type="file" id="music-file" accept=".mp3">
+        <button id="upload-button">Upload Music</button>
+        <div id="uploaded-files">
+            <h2>Uploaded Files:</h2>
+            <ul id="file-list"></ul>
+        </div>
+    </div>
+    <script>
+        const musicFileInput = document.getElementById('music-file');
+        const uploadButton = document.getElementById('upload-button');
+        const fileList = document.getElementById('file-list');
+        let currentlyPlayingAudio;
+        
+        uploadButton.addEventListener('click', () => {
+            const musicFile = musicFileInput.files[0];
+            const fileName = musicFile.name;
+            const fileURL = URL.createObjectURL(musicFile);
+            
+            // Create a new list item for the uploaded file
+            const listItem = document.createElement('li');
+            const audioContainer = document.createElement('div');
+            audioContainer.className = 'audio-container';
+            
+            const songTitle = document.createElement('p');
+            songTitle.className = 'song-title';
+            songTitle.textContent = fileName;
+            
+            const audioElement = document.createElement('audio');
+            audioElement.controls = true;
+            audioElement.src = fileURL;
+            
+            const downloadButton = document.createElement('button');
+            downloadButton.className = 'download-button';
+            downloadButton.textContent = 'Download';
+            downloadButton.setAttribute('data-file-url', fileURL);
+            downloadButton.setAttribute('data-file-name', fileName);
+            
+            audioContainer.appendChild(songTitle);
+            audioContainer.appendChild(audioElement);
+            listItem.appendChild(audioContainer);
+            listItem.appendChild(downloadButton);
+            fileList.appendChild(listItem);
+            
+            // Add event listener to play/pause audio
+            audioElement.addEventListener('play', () => {
+                if (currentlyPlayingAudio) {
+                    currentlyPlayingAudio.pause();
+                }
+                currentlyPlayingAudio = audioElement;
+            });
+        });
+        
+        // Add event listener to download buttons
+        fileList.addEventListener('click', (e) => {
+            if (e.target.classList.contains('download-button')) {
+                const fileURL = e.target.getAttribute('data-file-url');
+                const fileName = e.target.getAttribute('data-file-name');
+                const a = document.createElement('a');
+                a.href = fileURL;
+                a.download = fileName;
+                a.click();
+            }
+        });
+    </script>
+</body>
+</html>
+
